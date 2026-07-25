@@ -1,0 +1,10 @@
+node_modules/
+release/
+dist/
+outputs/
+work/
+backend/data/
+coverage/
+*.log
+.DS_Store
+Thumbs.db
