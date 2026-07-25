@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <meta name="color-scheme" content="light" />
+    <title>PrintLantern</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <strong>PrintLantern</strong>
+            <small>локальный портал печати</small>
+          </div>
+        </div>
+
+        <nav aria-label="Разделы">
+          <button class="nav-item active" data-target="overview">
+            <span>Файлы с телефона</span><small id="job-count-nav">0</small>
+          </button>
+          <button class="nav-item" data-target="network">
+            <span>Доступ с телефона</span><i id="network-dot"></i>
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <span class="eyebrow">Только ваша сеть</span>
+          <p>PrintLantern не отправляет названия документов в интернет.</p>
+        </div>
+        <div class="version" id="version">Версия —</div>
+      </aside>
+
+      <main>
+        <section id="overview" class="view active">
+          <header class="page-header">
+            <div>
+              <span class="eyebrow">Телефон → компьютер → принтер</span>
+              <h1>Файлы из Print Portal</h1>
+              <p id="updated-at">Подключаем мобильный портал…</p>
+            </div>
+            <div class="header-actions">
+              <button class="primary-button" id="open-portal-button">Открыть портал</button>
+              <button class="secondary-button" id="refresh-button">Обновить</button>
+            </div>
+          </header>
+
+          <div id="service-warning" class="notice warning hidden"></div>
+
+          <div class="metrics">
+            <article class="metric-card accent">
+              <span>Файлов в портале</span>
+              <strong id="active-count">0</strong>
+              <small>загрузка и настройка — с телефона</small>
+            </article>
+            <article class="metric-card">
+              <span>Принтеров найдено</span>
+              <strong id="printer-count">0</strong>
+              <small id="printer-note">в системе Windows</small>
+            </article>
+            <article class="metric-card">
+              <span>Доступ с телефона</span>
+              <strong class="status-word" id="portal-status">—</strong>
+              <small id="portal-note">локальная сеть</small>
+            </article>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">История и очередь</span>
+              <h2>Последние файлы</h2>
+            </div>
+          </div>
+          <div id="jobs" class="job-list"></div>
+          <div id="jobs-empty" class="empty-state">
+            <div class="empty-icon" aria-hidden="true">✓</div>
+            <h3>Файлов пока нет</h3>
+            <p>Откройте портал на телефоне и загрузите документ или фотографию.</p>
+          </div>
+        </section>
+
+        <section id="network" class="view">
+          <header class="page-header">
+            <div>
+              <span class="eyebrow">Локальный доступ</span>
+              <h1>Открыть на телефоне</h1>
+              <p>Телефон и компьютер должны быть подключены к одной Wi‑Fi сети.</p>
+            </div>
+          </header>
+
+          <div class="network-grid">
+            <article class="panel qr-panel">
+              <div id="qr-wrap" class="qr-wrap">
+                <img id="qr-code" alt="QR-код локального портала" />
+              </div>
+              <span class="eyebrow">Адрес портала</span>
+              <button id="portal-url" class="url-button">—</button>
+              <p class="muted">Наведите камеру телефона на QR-код.</p>
+            </article>
+
+            <article class="panel settings-panel">
+              <div class="setting-row switch-row">
+                <div>
+                  <strong>Доступ из локальной сети</strong>
+                  <p>Разрешить устройствам в вашей сети открыть портал.</p>
+                </div>
+                <label class="switch">
+                  <input id="lan-enabled" type="checkbox" />
+                  <span></span>
+                </label>
+              </div>
+
+              <div class="setting-row switch-row">
+                <div>
+                  <strong>Печатать сразу, без просмотра на ноутбуке</strong>
+                  <p>
+                    Если включено, задание с телефона сразу уйдёт в принтер.
+                    Paint и другие окна открываться не будут.
+                  </p>
+                </div>
+                <label class="switch">
+                  <input id="direct-print" type="checkbox" />
+                  <span></span>
+                </label>
+              </div>
+
+              <label class="field">
+                <span>Сетевой адрес</span>
+                <select id="address-select"></select>
+                <small>Выберите Wi‑Fi или Ethernet, если автоматически выбран неверный адрес.</small>
+              </label>
+
+              <label class="field">
+                <span>Принтер</span>
+                <select id="printer-select"></select>
+                <small>Задания с телефона будут отправляться на выбранный принтер Windows.</small>
+              </label>
+
+              <label class="field">
+                <span>Порт</span>
+                <div class="port-line">
+                  <input id="port-input" type="number" min="1024" max="65535" />
+                  <button id="save-network" class="primary-button">Применить</button>
+                </div>
+                <small id="settings-message">Изменение перезапустит локальный портал.</small>
+              </label>
+
+              <div id="server-error" class="notice warning hidden"></div>
+              <div class="privacy-note">
+                <strong>Важно</strong>
+                <p>
+                  Доступ работает без облака. Windows может впервые запросить разрешение
+                  брандмауэра — разрешите только для частных сетей.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

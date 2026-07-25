@@ -1,0 +1,77 @@
+{
+  "name": "printlantern",
+  "version": "0.3.1",
+  "description": "Phone-first local print portal with a Windows desktop host",
+  "main": "electron/main.js",
+  "author": "PrintLantern contributors",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/network.test.js test/printer-service.test.js scripts/test-backend-approval.mjs",
+    "check": "node --check electron/main.js && node --check electron/preload.js && node --check src/backend-service.js && node --check src/printer-service.js && node --check renderer/app.js",
+    "backend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-backend.ps1",
+    "test:backend": "node scripts/test-backend-approval.mjs",
+    "test:silent-print": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& '.\\work\\backend-venv\\Scripts\\python.exe' '.\\scripts\\test-silent-print.py'\"",
+    "icon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-icon.ps1",
+    "dist": "pnpm run backend && pnpm run icon && electron-builder --win nsis portable",
+    "dist:dir": "pnpm run backend && pnpm run icon && electron-builder --dir"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "electron": "^37.2.3",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "io.printlantern.desktop",
+    "productName": "PrintLantern",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "renderer/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/dist/printlantern-backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "artifactName": "${productName}-Setup-${version}-${arch}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}-${arch}.${ext}"
+    }
+  }
+}
